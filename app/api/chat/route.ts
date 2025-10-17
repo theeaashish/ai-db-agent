@@ -1,5 +1,12 @@
+import { db } from '@/db/db';
 import { google } from '@ai-sdk/google';
-import { streamText, UIMessage, convertToModelMessages, tool } from 'ai';
+import {
+  streamText,
+  UIMessage,
+  convertToModelMessages,
+  tool,
+  stepCountIs,
+} from 'ai';
 import { z } from 'zod';
 
 // Allow streaming responses up to 30 seconds
@@ -25,18 +32,52 @@ export async function POST(req: Request) {
     model: google('gemini-2.5-flash'),
     messages: convertToModelMessages(messages),
     system: SYSTEM_PROMPT,
+    stopWhen: stepCountIs(5),
     tools: {
-      db: tool({
-        description:
-          'Retrieve data from the database when the user asks for information stored in it (e.g., user details, task lists, statistics, logs). Accepts parameters like table name, filters, date range, and fields to query, and returns structured data matching the request.',
+      schema: tool({
+        description: 'Call this tool to get the database schema infromation.',
         inputSchema: z.object({
-          query: z.string().describe('The SQL query to execute against the database.'),
+          query: z
+            .string()
+            .describe('The SQL query to execute against the database.'),
+        }),
+        execute: async () => {
+          return `
+          CREATE TABLE products (
+    id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+    name text NOT NULL,
+    category text NOT NULL,
+    price real NOT NULL,
+    stock integer DEFAULT 0 NOT NULL,
+    created_at text DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE sales (
+    id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+    product_id integer NOT NULL,
+    quantity integer NOT NULL,
+    total_amount real NOT NULL,
+    sale_date text DEFAULT CURRENT_TIMESTAMP,
+    customer_name text NOT NULL,
+    region text NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE no action ON DELETE no action
+  );
+          `;
+        },
+      }),
+      db: tool({
+        description: 'Call this tool to query a database.',
+        inputSchema: z.object({
+          query: z
+            .string()
+            .describe('The SQL query to execute against the database.'),
         }),
         execute: async ({ query }) => {
-          console.log(query);
-
-          return '';
-        }
+          // important: we need to validate the query before executing it to prevent SQL injection
+          // string searching [delete, drop, insert, update] etc...
+          const data = await db.run(query);
+          return data;
+        },
       }),
     },
   });
