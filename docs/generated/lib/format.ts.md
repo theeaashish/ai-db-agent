@@ -2,9 +2,7 @@
 
 This module exports a utility function, `formatDate`, designed to convert a date input (which can be a `Date` object, string, or number timestamp) into a human-readable, localized string format.
 
-## Exports
-
-### `formatDate(date, locale)`
+## `formatDate(date, locale)`
 
 Formats a date into a readable string, typically resembling formats like "10 Feb 2026, 10:30 PM".
 
@@ -40,5 +38,3 @@ const timestamp = 1772544600000; // Example date in milliseconds
 const formatted = formatDate(timestamp, 'en-US');
 // Example output: "02/01/2026, 10:30 AM" (Actual output depends on locale implementation)
 ```
-
-> **Note:** This function is related to formatting utilities, as seen in the generated documentation for `docs/generated/lib/format.ts.md`.
