@@ -1,14 +1,14 @@
 # lib/format.ts
 
-This module provides utility functions for formatting dates.
+This module provides a utility function for formatting dates into a human-readable string using specified locale options.
 
 ## Exports
 
 ### `formatDate(date, locale)`
 
-Formats a `Date`, timestamp string, or number into a human-readable string using the specified locale.
+Formats a `Date`, timestamp string, or number into a readable string. The default output format resembles: `"10 Feb 2026, 10:30 PM"`.
 
-The default output format resembles: `"10 Feb 2026, 10:30 PM"`.
+This function uses `toLocaleString` with specific options (`day: "2-digit"`, `month: "short"`, `year: "numeric"`, `hour: "2-digit"`, `minute: "2-digit"`, `hour12: true`) to achieve a consistent, localized format.
 
 **Parameters:**
 
@@ -26,10 +26,11 @@ The default output format resembles: `"10 Feb 2026, 10:30 PM"`.
 ```typescript
 import { formatDate } from './lib/format';
 
-const now = new Date();
-const formatted = formatDate(now, 'en-US');
-// Example output: "05/15/2024, 03:45 PM" (format depends on locale)
+const timestamp = 1672531200000; // Jan 1, 2023
+const formatted = formatDate(timestamp, 'en-US');
+// Example output (en-US): "01/01/2023, 12:00 AM"
 
-const invalid = formatDate("not a date");
-// Output: "Invalid date"
+const specificDate = new Date('2025-10-20T15:45:00');
+const formattedIN = formatDate(specificDate); // Uses default 'en-IN'
+// Example output (en-IN): "20 Oct 2025, 03:45 PM"
 ```
