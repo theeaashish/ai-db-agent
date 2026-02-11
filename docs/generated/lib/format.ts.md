@@ -2,9 +2,7 @@
 
 This module provides a utility function for formatting dates into a human-readable string using specified locale options.
 
-## Exports
-
-### `formatDate(date, locale)`
+## `formatDate(date, locale)`
 
 Formats a `Date`, timestamp string, or number into a readable string. The default output format resembles: `"10 Feb 2026, 10:30 PM"`.
 
