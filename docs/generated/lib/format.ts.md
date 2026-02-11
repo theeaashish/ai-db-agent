@@ -1,34 +1,44 @@
 # lib/format.ts
 
-This module provides a utility function for formatting dates into a human-readable string using specified locale options.
+This module exports a utility function, `formatDate`, designed to convert a date input (which can be a `Date` object, string, or number timestamp) into a human-readable, localized string format.
 
-## `formatDate(date, locale)`
+## Exports
 
-Formats a `Date`, timestamp string, or number into a readable string. The default output format resembles: `"10 Feb 2026, 10:30 PM"`.
+### `formatDate(date, locale)`
 
-This function uses `toLocaleString` with specific options (`day: "2-digit"`, `month: "short"`, `year: "numeric"`, `hour: "2-digit"`, `minute: "2-digit"`, `hour12: true`) to achieve a consistent, localized format.
+Formats a date into a readable string, typically resembling formats like "10 Feb 2026, 10:30 PM".
+
+This function uses the browser's `toLocaleString` method with specific options to ensure a consistent output structure across different locales, prioritizing day, short month, year, and time components.
 
 **Parameters:**
 
 | Name | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `date` | `Date \| string \| number` | | The date value to format. |
-| `locale` | `string` | `"en-IN"` | The locale string to use for formatting (e.g., `"en-US"`, `"fr-FR"`). |
+| `date` | `Date \| string \| number` | - | The date input to format. |
+| `locale` | `string` | `"en-IN"` | The BCP 47 language tag to use for formatting (e.g., `"en-US"`, `"en-IN"`). |
 
 **Returns:**
 
-`string` - The formatted date string, or `"Invalid date"` if the input cannot be parsed into a valid date.
+*   `string`: The formatted date string, or `"Invalid date"` if the input cannot be parsed into a valid date.
 
-**Example Usage:**
+**Formatting Options Used:**
+
+The output format is constructed using:
+*   `day: "2-digit"`
+*   `month: "short"`
+*   `year: "numeric"`
+*   `hour: "2-digit"`
+*   `minute: "2-digit"`
+*   `hour12: true`
+
+**Example Usage (Conceptual):**
 
 ```typescript
 import { formatDate } from './lib/format';
 
-const timestamp = 1672531200000; // Jan 1, 2023
+const timestamp = 1772544600000; // Example date in milliseconds
 const formatted = formatDate(timestamp, 'en-US');
-// Example output (en-US): "01/01/2023, 12:00 AM"
-
-const specificDate = new Date('2025-10-20T15:45:00');
-const formattedIN = formatDate(specificDate); // Uses default 'en-IN'
-// Example output (en-IN): "20 Oct 2025, 03:45 PM"
+// Example output: "02/01/2026, 10:30 AM" (Actual output depends on locale implementation)
 ```
+
+> **Note:** This function is related to formatting utilities, as seen in the generated documentation for `docs/generated/lib/format.ts.md`.
