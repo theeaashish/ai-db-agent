@@ -1,31 +1,31 @@
 # UserService Documentation
 
-The `UserService` class manages user data, including creation, validation, deactivation, searching, and filtering active users. It relies on external utility functions for email validation (`validateEmail`) and generating usernames (`slugify`).
+The `UserService` class manages the lifecycle and storage of `User` objects. It handles user creation with validation, deactivation, searching, and filtering for active users.
 
 ## Dependencies
 
-This module depends on:
-*   `../utils/validateEmail`: Used to ensure the provided email address is in a valid format during user creation.
-*   `../utils/slugify`: Used to transform the user's name into a URL-friendly username.
+This service relies on utility functions for data transformation and validation:
+*   `validateEmail` (from `../utils/validateEmail`): Used to ensure email format correctness during user creation.
+*   `slugify` (from `../utils/slugify`): Used to generate a URL-friendly `username` from the user's `name`.
 
 ## Types
 
 ### `User`
 
-Defines the structure for a user object managed by the service.
+Defines the structure for a user record:
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
-| `id` | `string` | Unique identifier for the user (generated via `crypto.randomUUID()`). |
+| `id` | `string` | Unique identifier for the user. |
 | `name` | `string` | The user's full name. |
 | `email` | `string` | The user's email address. |
-| `username` | `string` | A URL-friendly slug derived from the `name`. |
-| `isActive` | `boolean` | Indicates if the user account is currently active. |
-| `createdAt` | `Date` | Timestamp when the user record was created. |
+| `username` | `string` | A slugified version of the name, used for public identifiers. |
+| `isActive` | `boolean` | Account status. |
+| `createdAt` | `Date` | Timestamp of account creation. |
 
 ## Class: `UserService`
 
-Manages the collection of users stored in an internal `Map`.
+Manages a collection of users stored in an internal `Map`.
 
 ### Methods
 
@@ -50,11 +50,10 @@ Marks an existing user as inactive.
 
 #### `search(query: string): User[]`
 
-Searches all stored users whose name or email contains the provided query string.
+Searches all users whose name or email contains the provided query string (case-insensitive).
 
-*   The search is case-insensitive.
 *   Returns an array of matching `User` objects.
 
 #### `getActiveUsers(): User[]`
 
-Returns an array containing only users where the `isActive` property is `true`.
+Returns an array containing only users where `isActive` is `true`.
