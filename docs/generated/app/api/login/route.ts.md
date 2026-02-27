@@ -1,14 +1,14 @@
-# Login and Authentication Utilities (`app/api/login/route.ts`)
+# Authentication Utilities (`app/api/login/route.ts`)
 
-This module provides core utilities for user authentication, including password hashing/verification using `bcrypt` and JWT generation/verification using `jsonwebtoken`. It also exports a high-level `loginUser` function for handling the login flow.
+This module provides core utility functions for handling user authentication tasks, including password hashing/verification using `bcrypt` and JSON Web Token (JWT) generation/verification using `jsonwebtoken`. It also exports a high-level `loginUser` function to orchestrate the login flow.
 
-**Note:** This module reads the JWT secret from `process.env.JWT_SECRET`, falling back to `"fallback-secret"` if not set.
+The JWT secret is read from `process.env.JWT_SECRET`, defaulting to `"fallback-secret"` if the environment variable is not set.
 
 ## Dependencies
 
 This module relies on:
-*   `bcrypt` for password hashing and comparison.
-*   `jsonwebtoken` for JWT operations.
+*   `bcrypt` for cryptographic operations on passwords.
+*   `jsonwebtoken` for creating and validating access tokens.
 
 ## Types
 
@@ -22,7 +22,7 @@ Defines the expected structure for a user object used within this module:
 | `email` | `string` | The user's email address. |
 | `passwordHash` | `string` | The hashed version of the user's password. |
 
-## Exports
+## Exported Functions
 
 ### `hashPassword(password: string): Promise<string>`
 
@@ -32,7 +32,7 @@ Hashes a plain-text password using bcrypt with a salt round of 10.
 
 | Name | Type | Description |
 | :--- | :--- | :--- |
-| `password` | `string` | The password to hash. |
+| `password` | `string` | The plain-text password to hash. |
 
 **Returns:**
 
@@ -81,7 +81,7 @@ Verifies the signature and expiration of a provided JWT using the configured sec
 
 **Returns:**
 
-The decoded payload containing the `userId`. Throws an error if verification fails.
+The decoded payload containing the `userId`. Throws an error if verification fails (e.g., invalid signature or expired token).
 
 ### `loginUser(email: string, password: string, findUser: (email: string) => Promise<User | null>): Promise<{ token: string; user: User } | null>`
 
@@ -93,7 +93,7 @@ Handles the complete user login process: fetching the user, verifying the passwo
 | :--- | :--- | :--- |
 | `email` | `string` | The user's email address for lookup. |
 | `password` | `string` | The plain-text password provided during login. |
-| `findUser` | `(email: string) => Promise<User | null>` | A callback function responsible for retrieving the user record by email from the database or persistence layer. |
+| `findUser` | `(email: string) => Promise<User | null>` | A callback function responsible for retrieving the user record by email from the persistence layer. |
 
 **Returns:**
 
