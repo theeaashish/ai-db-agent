@@ -55,9 +55,7 @@ A promise that resolves to `true` if the password matches the hash, otherwise `f
 
 ### `generateToken(userId: string): string`
 
-Generates a JWT signed with the configured secret.
-
-The token payload contains the `userId` and is set to expire in 24 hours (`24h`).
+Generates a JSON Web Token (JWT) for the given user ID, valid for 24 hours.
 
 **Parameters:**
 
@@ -67,11 +65,11 @@ The token payload contains the `userId` and is set to expire in 24 hours (`24h`)
 
 **Returns:**
 
-A signed JWT string.
+The generated JWT string.
 
 ### `verifyToken(token: string): { userId: string }`
 
-Verifies the signature and expiration of a provided JWT using the configured secret.
+Verifies a JWT and extracts the payload.
 
 **Parameters:**
 
@@ -81,20 +79,20 @@ Verifies the signature and expiration of a provided JWT using the configured sec
 
 **Returns:**
 
-The decoded payload containing the `userId`. Throws an error if verification fails.
+An object containing the decoded payload, specifically `{ userId: string }`.
 
 ### `loginUser(email: string, password: string, findUser: (email: string) => Promise<User | null>): Promise<{ token: string; user: User } | null>`
 
-Handles the complete user login process: fetching the user, verifying the password, and generating a JWT upon success.
+Handles the complete user login process: finds the user, verifies the password, and generates an authentication token upon success.
 
 **Parameters:**
 
 | Name | Type | Description |
 | :--- | :--- | :--- |
-| `email` | `string` | The user's email address for lookup. |
-| `password` | `string` | The plain-text password provided during login. |
-| `findUser` | `(email: string) => Promise<User | null>` | A callback function responsible for retrieving the user record by email from the database or persistence layer. |
+| `email` | `string` | The user's email address. |
+| `password` | `string` | The plain-text password provided by the user. |
+| `findUser` | `(email: string) => Promise<User | null>` | A callback function responsible for fetching the user record from the database based on the email. |
 
 **Returns:**
 
-A promise that resolves to an object containing the generated `token` and the retrieved `user` object if login is successful. Returns `null` if the user is not found or the password verification fails.
+A promise that resolves to an object containing the authentication `token` and the `user` object if login is successful, or `null` if the user is not found or the password is incorrect.
