@@ -1,0 +1,93 @@
+# GitScribe Configuration
+# =======================
+# This is the configuration file for GitScribe AI documentation generator.
+# Place this file in the root of your GitHub repository.
+#
+
+# Schema version (optional - for future migrations)
+version: "1.0"
+
+# Maximum number of files to process concurrently
+# Higher values = faster generation but more API calls
+# Default: 5
+maxConcurrentFiles: 5
+
+# Documentation generation settings
+docs:
+  # Output directory for generated documentation
+  # GitScribe will create a PR with changes in this directory
+  # Default: "docs/generated"
+  outputDir: "docs/generated"
+
+  # Tone of the generated documentation
+  # Options:
+  #   - "formal"   : Professional, detailed technical documentation
+  #   - "friendly" : Casual, approachable with examples
+  #   - "concise"  : Brief, to-the-point summaries
+  # Default: "formal"
+  tone: "formal"
+
+# AI test generation settings (optional)
+tests:
+  # Enable missing sibling test generation for changed JS/TS source files
+  # Default: false
+  enabled: true
+
+  # Test framework for generated files
+  # Supported values:
+  #   - "jest"
+  #   - "vitest"
+  # Required when enabled=true
+  framework: "vitest"
+
+# Files and directories to ignore
+# Supports glob patterns (same as .gitignore)
+# Default ignored patterns:
+#   - node_modules/**
+#   - dist/**
+#   - .git/**
+#   - .next/**
+#   - build/**
+#   - coverage/**
+#   - *.lock
+#   - *.log
+ignore:
+  # Dependencies
+  - "node_modules/**"
+  - "vendor/**"
+  - ".venv/**"
+
+  # Build outputs
+  - "dist/**"
+  - "build/**"
+  - ".next/**"
+  - "out/**"
+
+  # Version control
+  - ".git/**"
+
+  # Test coverage
+  - "coverage/**"
+  - ".nyc_output/**"
+
+  # Environment files
+  - ".env*"
+  - ".env.local"
+  - ".env.production"
+
+  # Lock files
+  - "*.lock"
+  - "package-lock.json"
+  - "yarn.lock"
+  - "pnpm-lock.yaml"
+
+  # Log files
+  - "*.log"
+  - "npm-debug.log*"
+  - "yarn-error.log"
+
+  # IDE & OS
+  - ".vscode/**"
+  - ".idea/**"
+  - ".DS_Store"
+  - "Thumbs.db"
