@@ -1,18 +1,17 @@
-# Login and Authentication Utilities (`app/api/login/route.ts`)
+# API Login Utilities (`app/api/login/route.ts`)
 
-This module provides core utilities for user authentication, including password hashing/verification using `bcrypt` and JWT generation/verification using `jsonwebtoken`. It also exports a high-level `loginUser` function for handling the login flow.
-
-**Note:** This module reads the JWT secret from `process.env.JWT_SECRET`, falling back to `"fallback-secret"` if not set.
+This module provides core utilities for user authentication, including password hashing/verification using `bcrypt` and JWT generation/verification using `jsonwebtoken`. It also exports a high-level `loginUser` function to handle the authentication flow.
 
 ## Dependencies
 
-This module relies on:
-*   `bcrypt` for password hashing and comparison.
-*   `jsonwebtoken` for JWT operations.
+This file directly imports and uses:
+*   `bcrypt` for cryptographic hashing operations.
+*   `jsonwebtoken` for creating and verifying authentication tokens.
+*   It reads the JWT secret from the environment variable `JWT_SECRET`, falling back to `"fallback-secret"`.
 
-## Types
+## Interfaces
 
-### `User` (Interface)
+### `User`
 
 Defines the expected structure for a user object used within this module:
 
@@ -20,13 +19,13 @@ Defines the expected structure for a user object used within this module:
 | :--- | :--- | :--- |
 | `id` | `string` | The unique identifier for the user. |
 | `email` | `string` | The user's email address. |
-| `passwordHash` | `string` | The hashed version of the user's password. |
+| `passwordHash` | `string` | The stored, hashed password. |
 
 ## Exports
 
 ### `hashPassword(password: string): Promise<string>`
 
-Hashes a plain-text password using bcrypt with a salt round of 10.
+Hashes a plain-text password using bcrypt with 10 salt rounds.
 
 **Parameters:**
 
@@ -40,7 +39,7 @@ A promise that resolves to the generated password hash string.
 
 ### `verifyPassword(password: string, hash: string): Promise<boolean>`
 
-Compares a plain-text password against a stored hash.
+Compares a plain-text password against a stored hash using bcrypt.
 
 **Parameters:**
 
@@ -55,7 +54,9 @@ A promise that resolves to `true` if the password matches the hash, otherwise `f
 
 ### `generateToken(userId: string): string`
 
-Generates a JSON Web Token (JWT) for the given user ID, valid for 24 hours.
+Generates a JWT signed with the configured secret (`JWT_SECRET`).
+
+The token payload contains the `userId` and is set to expire in 24 hours (`24h`).
 
 **Parameters:**
 
@@ -65,11 +66,11 @@ Generates a JSON Web Token (JWT) for the given user ID, valid for 24 hours.
 
 **Returns:**
 
-The generated JWT string.
+A signed JWT string.
 
 ### `verifyToken(token: string): { userId: string }`
 
-Verifies a JWT and extracts the payload.
+Verifies the signature and expiration of a provided JWT using the configured secret.
 
 **Parameters:**
 
@@ -79,11 +80,13 @@ Verifies a JWT and extracts the payload.
 
 **Returns:**
 
-An object containing the decoded payload, specifically `{ userId: string }`.
+The decoded payload containing the `userId`. Throws an error if verification fails (e.g., invalid signature or expired token).
 
 ### `loginUser(email: string, password: string, findUser: (email: string) => Promise<User | null>): Promise<{ token: string; user: User } | null>`
 
-Handles the complete user login process: finds the user, verifies the password, and generates an authentication token upon success.
+Attempts to authenticate a user by email and password.
+
+This function first retrieves the user using the provided `findUser` function, verifies the password against the stored hash, and if successful, generates an authentication token.
 
 **Parameters:**
 
@@ -91,8 +94,8 @@ Handles the complete user login process: finds the user, verifies the password, 
 | :--- | :--- | :--- |
 | `email` | `string` | The user's email address. |
 | `password` | `string` | The plain-text password provided by the user. |
-| `findUser` | `(email: string) => Promise<User | null>` | A callback function responsible for fetching the user record from the database based on the email. |
+| `findUser` | `(email: string) => Promise<User | null>` | A function to look up a user by email. |
 
 **Returns:**
 
-A promise that resolves to an object containing the authentication `token` and the `user` object if login is successful, or `null` if the user is not found or the password is incorrect.
+A promise that resolves to an object containing the generated `token` and the retrieved `user` object upon successful login, or `null` if the user is not found or the password verification fails.
